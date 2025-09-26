@@ -1,25 +1,40 @@
-﻿namespace ShopingApp
+﻿using System.Collections.ObjectModel;
+using Newtonsoft.Json;
+using ShopingApp.Models;
+
+namespace ShopingApp
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
+     
         public MainPage()
         {
             InitializeComponent();
+            LoadDataFromRestAPI();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        // LISTAN HAKEMINEN BACKENDISTÄ
+        public async Task LoadDataFromRestAPI()
         {
-            count++;
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+            // Latausilmoitus näkyviin
+            Loading_label.IsVisible = true;
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("https://shoppingbackendmob.azurewebsites.net");
+            string json = await client.GetStringAsync("/api/shoplist");
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            // Deserialisoidaan json muodosta C# muotoon
+            IEnumerable<Shoplist> ienumShoplist = JsonConvert.DeserializeObject<Shoplist[]>(json);
+
+            ObservableCollection<Shoplist> Shoplist = new ObservableCollection<Shoplist>(ienumShoplist);
+
+            // Setting the ItemSource of ListView
+            itemList.ItemsSource = Shoplist;
+
+            // Latausilmoitus piiloon
+            Loading_label.IsVisible = false;
         }
+
     }
 
 }
