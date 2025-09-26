@@ -6,7 +6,7 @@ namespace ShopingApp
 {
     public partial class MainPage : ContentPage
     {
-     
+
         public MainPage()
         {
             InitializeComponent();
@@ -35,6 +35,13 @@ namespace ShopingApp
             Loading_label.IsVisible = false;
         }
 
-    }
 
+
+        // Lisäyssivulle navigoiminen
+        private async void addPageBtn_Clicked(object sender, EventArgs e)
+        {
+            await Shell.Current.Navigation.PushModalAsync(new AddingPage());
+        }
+
+    }
 }
